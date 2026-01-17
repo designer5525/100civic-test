@@ -208,7 +208,7 @@
             max-width: 500px;
     
          /* 1. 設定固定或最大高度，避免撐破頁面 */
-            height: 300px; 
+            height: 220px; 
     
         /* 2. 核心：內容過多時允許垂直滾動 */
             overflow-y: auto; 
@@ -650,7 +650,7 @@ button#main-btn.main-action-btn.colorful {
 
 /* 頂部圓點容器 */
 .quiz-header { width: 100%; max-width: 500px; margin-bottom: 10px; }
-.header-top { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px; }
+.header-top { display: flex; justify-content: space-between; font-weight: bold; margin-top: 10px; margin-bottom: 10px; }
 
 .dots-container {
     display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
