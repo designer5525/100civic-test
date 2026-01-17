@@ -35,6 +35,17 @@
         .invisible { opacity: 0 !important; }
         .btn { border: none; cursor: pointer; outline: none; transition: transform 0.1s; }
         .btn:active { transform: scale(0.95); }
+         
+        /*讓所有畫面置中*/
+         #home-screen, #glossary-menu-screen, #practice-screen, #quiz-screen,  #bookmark-screen {
+             width: 100%;
+             max-width: 500px; /* 限制最大寬度 */
+             margin: 0 auto;   /* 關鍵：讓容器水平置中 */
+             position: relative;
+             left: 0;
+             right: 0;
+         }
+
 
         /* --- Home Screen --- */
         #home-screen {
