@@ -18,15 +18,16 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        body {
+       body {
     margin: 0;
-    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0; /* 自動適應安全區域 */
-    background-color: var(--bg-color);
-    height: 100vh;
-    height: 100svh; /* 支援現代瀏覽器的小視窗高度，避免底部被工具列擋住 */
-    overflow: hidden;
+    /* 確保高度精確，並扣除 iOS 安全區域 */
+    height: 100vh; 
+    height: 100dvh; /* 動態視窗高度 (Dynamic Viewport Height) */
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    position: fixed; /* 防止橡皮筋回彈效果導致底部偏移 */
+    width: 100%;
 }
 
         /* --- Common Utils --- */
@@ -210,7 +211,7 @@
     max-width: 500px;
     
     flex: 1;          /* 重要：自動佔滿剩餘高度 */
-    min-height: 100px;    /* 重要：Flex 彈性壓縮的關鍵，允許高度小於內容 */
+    min-height: 50px;    /* 重要：Flex 彈性壓縮的關鍵，允許高度小於內容 */
     margin: 10px 0;   /* 給卡片一點上下間距 */
     
     overflow-y: auto; /* 內容多時內部滾動 */
