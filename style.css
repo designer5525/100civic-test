@@ -19,14 +19,16 @@
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            height: 100vh;
-            overflow: hidden; /* Prevent whole page scroll */
-            display: flex;
-            flex-direction: column;
-        }
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    /* 將原本的 overflow: hidden 改為只針對 X 軸隱藏 */
+    overflow-x: hidden; 
+    overflow-y: auto;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
 
         /* --- Common Utils --- */
         .hidden { display: none !important; }
@@ -132,17 +134,19 @@
         /* --- Practice Screen (Dark Mode) --- */
         #practice-screen {
             background-color: var(--dark-bg);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 40px 20px;
-            color: var(--white);
-            position: relative;
-            overflow: hidden;
-        }
-
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 移除 justify-content: space-between; 改用 padding 支撐 */
+    justify-content: flex-start; 
+    padding: 60px 20px 40px 20px; /* 增加頂部間距給進度條 */
+    color: var(--white);
+    position: relative;
+    /* 核心修改：允許內容過長時滾動 */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
         /* Progress Indicator */
         .progress-indicator {
             position: absolute;
@@ -206,8 +210,8 @@
             color: var(--text-main);
             width: 100%;
             max-width: 500px;
-
-            flex: 1;           /* 讓它佔滿剩餘空間 */
+           /* 核心修改：高度自適應，不要強制 flex: 1 */
+           flex-shrink: 0;
             min-height: 100px; /* 設定一個最小保底高度，而不是固定高度 */
     
         /* 2. 核心：內容過多時允許垂直滾動 */
@@ -645,7 +649,15 @@ button#main-btn.main-action-btn.colorful {
 /* 測試分頁背景與布局 */
 #quiz-screen {
     background-color: #ffffff; 
-    flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px; color: #333;
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    padding: 20px; 
+    color: #333;
+    /* 允許測試頁面垂直滾動 */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* 頂部圓點容器 */
