@@ -25,7 +25,7 @@
             /* 修正手機 Chrome 高度陷阱 */
             height: 100vh;
             height: 100dvh;
-            overflow: auto; /* Prevent whole page scroll */
+            overflow-y: auto; /* Prevent whole page scroll */
             display: flex;
             flex-direction: column;
         }
