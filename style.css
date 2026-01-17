@@ -45,6 +45,33 @@
             overflow-y: auto; /* Allow home to scroll if screen is small */
         }
 
+             
+        #glossary-menu-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* 佔滿螢幕高度 */
+    padding: 0;    /* 移除內邊距，交給內部元素控制 */
+    overflow: hidden; /* 防止整個頁面產生多餘滾動條 */
+}
+
+/* 針對內部的列表容器 */
+#glossary-menu-screen .list-container {
+    flex: 1;           /* 這行最重要：讓列表佔滿中間剩餘空間 */
+    overflow-y: auto;  /* 允許內部滾動 */
+    min-height: 0;     /* 修正 Flexbox 在某些瀏覽器的縮放問題 */
+    width: 100%;
+    padding: 20px;
+}
+
+/* 針對底部的按鈕區域 */
+#glossary-menu-screen .bottom-btn-area {
+    flex-shrink: 0;    /* 禁止壓縮，確保按鈕永遠可見 */
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    background: var(--bg-color); /* 設為與背景同色 */
+}
+
         .header {
             text-align: center;
             margin-bottom: 30px;
