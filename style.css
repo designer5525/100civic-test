@@ -1,3 +1,4 @@
+<style>
 /* --- 1. 全局變數與重置 --- */
 :root {
     --primary-color: #5856D6;
@@ -174,6 +175,8 @@ body {
     background-color: #FFFFFF !important;
 }
 .main-action-btn:active { transform: scale(0.9) !important; }
+
+<style>
 
 /* --- 5. 跟讀清單與收藏 (Glossary Menu & Bookmark Screen) --- */
 #glossary-menu-screen, #bookmark-screen
