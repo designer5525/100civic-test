@@ -141,6 +141,7 @@ body {
     padding: 60px 20px 180px 20px; 
     box-sizing: border-box;
     width: 100%;
+        
 }
 
         /* Progress Indicator */
@@ -646,7 +647,7 @@ button#main-btn.main-action-btn.colorful {
     align-items: center;
     padding: 20px;
     color: #333;
-    overflow: hidden; /* 防止整個頁面滾動 */
+    overflow: visible;
 }
 
 /* 頂部圓點容器 */
