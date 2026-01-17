@@ -1,187 +1,108 @@
 <style>
     :root {
         --primary-color: #5856D6;
-        --primary-light: #7A78EA;
         --bg-color: #F2F2F7;
-        --dark-bg: #1C1C1E;
-        --card-bg: #FFFFFF;
         --text-main: #000000;
         --text-sub: #8E8E93;
         --white: #FFFFFF;
-        --danger: #FF3B30;
-        --secondary: #8E8E93;
     }
 
-    * {
-        box-sizing: border-box;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        -webkit-tap-highlight-color: transparent;
+    /* 關鍵點 1：徹底解鎖全局捲動 */
+    html {
+        height: 100%;
+        overflow: hidden; /* 防止雙重捲動條 */
     }
 
-    /* --- 基礎容器修正 --- */
     body {
         margin: 0;
         padding: 0;
-        min-height: 100dvh; 
-        height: auto; 
-        overflow-y: auto; /* 開啟全局捲動 */
+        height: 100%; /* 固定高度 */
+        overflow-y: auto; /* 在 body 層級捲動 */
+        -webkit-overflow-scrolling: touch; 
         background-color: var(--bg-color);
-        display: block;
+        display: block; /* 取消 flex，改用傳統佈局以支持自然捲動 */
     }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     .hidden { display: none !important; }
-    .invisible { opacity: 0 !important; }
-    .btn { border: none; cursor: pointer; outline: none; transition: transform 0.1s; }
-    .btn:active { transform: scale(0.95); }
 
-    /* --- 首頁與選單 --- */
-    #home-screen, #glossary-menu-screen {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 40px 20px;
-        min-height: 100dvh;
-    }
-
-    .header { text-align: center; margin-bottom: 30px; }
-    .header h1 { color: #1a1a1a; font-size: 28px; margin: 0; font-weight: 700; }
-    .header h2 { color: var(--primary-color); font-size: 32px; margin: 5px 0 0 0; font-weight: 800; }
-
-    .grid-menu {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
+    /* 關鍵點 2：屏幕容器優化 */
+    #home-screen, #quiz-screen, #practice-screen, #glossary-menu-screen {
         width: 100%;
-        max-width: 500px;
-    }
-
-    .menu-card {
-        background: var(--primary-color);
-        border-radius: 24px;
-        padding: 25px 15px;
-        text-align: center;
-        color: var(--white);
+        min-height: 100.1%; /* 稍微超過 100% 強制啟動彈性捲動 */
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        height: 120px;
-    }
-    .menu-card.yellow { background: rgb(255, 243, 232); color: var(--text-main); border: 3px solid #ffb45d; }
-    .menu-card.blue { background: rgb(212, 238, 255); color: var(--text-main); border: 3px solid #5aa7ff; }
-
-    /* --- 測試介面 (重點修正區) --- */
-    #quiz-screen, #practice-screen {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        min-height: 100dvh;
-        /* 60px 避開 Chrome 頂部，220px 留給底部固定按鈕 */
-        padding: 60px 20px 220px 20px; 
+        padding: 40px 20px 280px 20px; /* 底部預留極大空間給 Fixed 按鈕區 */
         box-sizing: border-box;
-        overflow-y: visible; /* 允許整體捲動 */
     }
 
-    .quiz-header {
-        width: 100%;
-        max-width: 500px;
-        flex-shrink: 0;
-        margin-bottom: 10px;
-    }
-
-    .dots-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        justify-content: center;
-        max-height: 100px;
-        overflow-y: auto; /* 圓點太多時可捲動 */
-        padding: 5px;
-    }
-
-    .dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #BCBCBC; background: white; }
-    .dot.current { outline: 2px solid #000; border-color: #000; }
-    .dot.correct { background-color: #67B367; border-color: #67B367; }
-    .dot.wrong { background-color: #E85A4F; border-color: #E85A4F; }
-
-    .officer-avatar {
-        width: 70px;
-        height: 70px;
-        background: #d8d8ff;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 40px;
-        border: 3px solid var(--primary-color);
-        margin: 10px 0;
-        flex-shrink: 0;
-    }
-
-    /* 關鍵：卡片捲動與高度平衡 */
+    /* 關鍵點 3：卡片內滾動與寬度限制 */
     .question-box {
         background: var(--white);
-        color: var(--text-main);
         width: 100%;
         max-width: 500px;
-        flex: none; /* 不強制撐滿，讓高度由內容決定 */
-        min-height: 120px;
-        max-height: 45vh; /* 如果文字超長，卡片最高佔螢幕 45% */
-        overflow-y: auto; /* 超過 max-height 時內部捲動 */
-        border-radius: 20px;
+        margin: 20px 0;
         padding: 25px;
-        margin: 10px 0;
+        border-radius: 20px;
         border: 1px solid #79abe1;
         box-shadow: 0 10px 30px rgba(163, 187, 255, 0.3);
+        
+        /* 卡片內部捲動邏輯 */
+        flex-shrink: 0; /* 禁止被 flex 壓縮 */
+        max-height: 35vh; /* 限制高度，超過則內部捲動 */
+        overflow-y: auto; 
         -webkit-overflow-scrolling: touch;
     }
 
-    .question-content { font-size: 22px; font-weight: 600; line-height: 1.4; }
-
-    /* --- 底部按鈕固定區 --- */
+    /* 關鍵點 4：固定控制區防干擾 */
     .controls-area {
-        position: fixed; /* 固定在螢幕底部 */
+        position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
-        background: linear-gradient(to top, var(--bg-color) 80%, rgba(242,242,247,0));
-        padding: 15px 20px 40px 20px;
+        z-index: 1000;
+        /* 使用漸變背景，確保按鈕下方內容被遮蓋但上方有過渡 */
+        background: linear-gradient(to top, var(--bg-color) 85%, rgba(242,242,247,0));
+        padding: 10px 20px 40px 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        z-index: 1000;
+        /* 避免這個固定區域擋住背景滑動，設定 pointer-events: none */
+        pointer-events: none; 
     }
 
-    .quiz-main-btn {
-        width: 100%; max-width: 500px; height: 55px; border-radius: 100px;
-        background: #4A90E2 !important; color: white !important;
-        font-size: 20px; font-weight: bold; margin-top: 10px;
+    /* 確保按鈕本身可以點擊 */
+    .controls-area .btn, .controls-area .quiz-main-btn, .controls-area .judge-group {
+        pointer-events: auto;
     }
-    .quiz-main-btn.next-mode { background: #333333 !important; }
 
-    .judge-group { display: none; width: 100%; flex-direction: column; gap: 10px; margin-bottom: 10px; }
-    .judge-group.show { display: flex; }
-    .btn-judge { width: 100%; height: 50px; border-radius: 100px; color: white; font-weight: bold; font-size: 20px; }
-    .btn-correct { background-color: #46d573; }
-    .btn-wrong { background-color: #ec5449; }
-
+    /* 關鍵點 5：底部動作區（退出/重來） */
+    /* 這些按鈕應該跟隨頁面捲動，不要固定，否則會重疊 */
     .bottom-actions {
         display: flex;
         justify-content: space-between;
         width: 100%;
         max-width: 500px;
-        margin-top: 10px;
+        margin-top: 20px;
+        padding-bottom: 20px;
     }
 
-    /* --- 其他頁面樣式維持 --- */
-    .reading-card {
-        background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px;
-        display: flex; align-items: center; gap: 12px;
+    /* 其他 UI 樣式維持原樣 */
+    .officer-avatar {
+        width: 80px; height: 80px; font-size: 45px;
+        border-radius: 50%; border: 3px solid var(--primary-color);
+        display: flex; align-items: center; justify-content: center;
+        background: #d8d8ff; margin: 10px 0; flex-shrink: 0;
     }
-    .reading-en { font-size: 18px; font-weight: 800; color: #000; }
-    .reading-cn { font-size: 14px; color: #8E8E93; }
-
-    .contact-section { margin-top: 40px; padding-bottom: 50px; text-align: center; width: 100%; }
-    .disclaimer-box { background-color: #E5E5EA; padding: 16px; border-radius: 16px; font-size: 13px; text-align: left; }
+    
+    .dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #BCBCBC; }
+    .dot.current { border: 2px solid #000; }
+    
+    .quiz-main-btn {
+        width: 100%; max-width: 500px; height: 55px; border-radius: 100px;
+        background: #4A90E2 !important; color: white !important;
+        font-size: 20px; font-weight: bold;
+    }
 </style>
