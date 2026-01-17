@@ -325,15 +325,16 @@
         }
         .click-hint span { margin-top: 10px; font-size: 18px; font-weight: bold; }
 
-        .controls-area {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 5px;
-            width: 100%;
-            max-width: 500px;
-        }
+       .controls-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    flex-shrink: 0;   /* 重要：底部按鈕絕對不被壓縮 */
+    margin-top: auto; /* 確保推到最底部 */
+    padding-bottom: 10px;
+}
 
         .round-btn {
             width: 60px;
@@ -382,13 +383,15 @@ button#main-btn.main-action-btn.colorful {
     transform: scale(0.9) !important;
 }
 
-        .bottom-actions {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 500px;
-            margin-top: 20px;
-        }
+    /* 底部功能按鈕（退出/重來） */
+.bottom-actions {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 500px;
+    margin-top: 10px;
+    flex-shrink: 0;
+}
 
         .rect-btn {
             background: #cbe8ff;
@@ -705,8 +708,16 @@ button#main-btn.main-action-btn.colorful {
 
 /* 對錯按鈕組 */
 .quiz-controls { flex-direction: column; width: 100%; }
-.judge-group { display: none; width: 100%; max-width: 500px; flex-direction: column; margin-top:20px; margin-bottom: -15px; }
-.judge-group.show { display: flex; }
+/* 對錯按鈕組 */
+.judge-group {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    margin-bottom: 10px; /* 縮小原本負數的 margin */
+}
+.judge-group.show {
+    display: flex;
+}
 
 .btn-judge { flex: 1; height: 45px; border-radius: 100px; color: white; font-weight: bold; font-size: 20px; }
 .btn-correct { background-color: #46d573; }
