@@ -210,7 +210,7 @@
     max-width: 500px;
     
     flex: 1;          /* 重要：自動佔滿剩餘高度 */
-    min-height: 0;    /* 重要：Flex 彈性壓縮的關鍵，允許高度小於內容 */
+    min-height: 100px;    /* 重要：Flex 彈性壓縮的關鍵，允許高度小於內容 */
     margin: 10px 0;   /* 給卡片一點上下間距 */
     
     overflow-y: auto; /* 內容多時內部滾動 */
@@ -222,30 +222,7 @@
     box-shadow: 0 10px 30px rgba(163, 187, 255, 0.3);
     -webkit-overflow-scrolling: touch;
 }
-    
-         /* 1. 設定固定或最大高度，避免撐破頁面 */
-            height: 220px; 
-    
-        /* 2. 核心：內容過多時允許垂直滾動 */
-            overflow-y: auto; 
-    
-            border-radius: 20px;
-            padding: 30px;
-    
-        /* 3. 修改佈局：長題目建議靠左對齊，閱讀比較自然 */
-            display: block; 
-            text-align: left; 
-            
-            position: relative;
-            cursor: pointer;
-            border: 1px solid #79abe1;
-            box-shadow: 0 10px 30px rgba(163, 187, 255, 0.3);
-            transition: all 0.3s ease;
-    
-         /* 4. 優化滑動流暢度 */
-             -webkit-overflow-scrolling: touch;
-        }
-
+   
         /* N400 Question Style */
         .question-content {
             font-size: 22px;
@@ -325,14 +302,14 @@
         .click-hint span { margin-top: 10px; font-size: 18px; font-weight: bold; }
 
        .controls-area {
-     display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 5px;
-            width: 100%;
-            max-width: 500px;
-        }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    margin-top: auto;  /* 推到最底部 */
+    flex-shrink: 0;    /* 確保按鈕區域不會因為卡片太大而被壓扁 */
+}
 
 
         .round-btn {
