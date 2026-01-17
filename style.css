@@ -212,7 +212,7 @@
             max-width: 500px;
            /* 核心修改：高度自適應，不要強制 flex: 1 */
            flex-shrink: 0;
-            min-height: 100px; /* 設定一個最小保底高度，而不是固定高度 */
+            min-height: 200px; /* 設定一個最小保底高度，而不是固定高度 */
     
         /* 2. 核心：內容過多時允許垂直滾動 */
             overflow-y: auto; 
