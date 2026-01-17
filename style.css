@@ -20,14 +20,14 @@
 
        body {
     margin: 0;
-    /* 確保高度精確，並扣除 iOS 安全區域 */
-    height: 100vh; 
-    height: 100dvh; /* 動態視窗高度 (Dynamic Viewport Height) */
+    padding: 0;
+    background-color: var(--bg-color);
+    /* 核心修正：使用動態高度並防止溢出 */
+    height: 100dvh; 
+    width: 100vw;
+    overflow: hidden; 
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    position: fixed; /* 防止橡皮筋回彈效果導致底部偏移 */
-    width: 100%;
 }
 
         /* --- Common Utils --- */
@@ -132,18 +132,17 @@
         .glossary-item-btn:active { background: #E5E5EA; }
 
         /* --- Practice Screen (Dark Mode) --- */
-        #practice-screen {
-            background-color: var(--dark-bg);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 40px 20px;
-            color: var(--white);
-            position: relative;
-            overflow: hidden;
-        }
+       #practice-screen, #quiz-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 這裡設定硬性安全距離：頂部 20px，左右 20px，底部固定留 40px */
+    /* 40px 足夠避開絕大多數手機的底部橫條 */
+    padding: 20px 20px 40px 20px; 
+    box-sizing: border-box;
+    position: relative;
+}
 
         /* Progress Indicator */
         .progress-indicator {
