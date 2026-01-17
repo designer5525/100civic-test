@@ -23,7 +23,7 @@
             padding: 0;
             background-color: var(--bg-color);
             height: 100vh;
-            overflow: hidden; /* Prevent whole page scroll */
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
         }
