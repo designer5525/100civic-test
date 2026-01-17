@@ -1,277 +1,686 @@
-:root {
-    --primary-color: #5856D6; /* iOS Purple/Blue */
-    --primary-light: #7A78EA;
-    --bg-color: #F2F2F7;
-    --dark-bg: #1C1C1E;
-    --card-bg: #FFFFFF;
-    --text-main: #000000;
-    --text-sub: #8E8E93;
-    --white: #FFFFFF;
-    --danger: #FF3B30;
-    --secondary: #8E8E93;
-}
+ <style>
+        :root {
+            --primary-color: #5856D6; /* iOS Purple/Blue */
+            --primary-light: #7A78EA;
+            --bg-color: #F2F2F7;
+            --dark-bg: #1C1C1E;
+            --card-bg: #FFFFFF;
+            --text-main: #000000;
+            --text-sub: #8E8E93;
+            --white: #FFFFFF;
+            --danger: #FF3B30;
+            --secondary: #8E8E93;
+        }
 
-* {
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            height: 100vh;
+            overflow: hidden; /* Prevent whole page scroll */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Common Utils --- */
+        .hidden { display: none !important; }
+        .invisible { opacity: 0 !important; }
+        .btn { border: none; cursor: pointer; outline: none; transition: transform 0.1s; }
+        .btn:active { transform: scale(0.95); }
+
+        /* --- Home Screen --- */
+        #home-screen, #glossary-menu-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto; /* Allow home to scroll if screen is small */
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #1a1a1a;
+            font-size: 28px;
+            margin: 0;
+            font-weight: 700;
+        }
+        .header h2 {
+            color: var(--primary-color);
+            font-size: 32px;
+            margin: 5px 0 0 0;
+            font-weight: 800;
+        }
+
+        .grid-menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+       
+
+        .menu-card {
+            background: var(--primary-color);
+            border-radius: 24px;
+            padding: 25px 15px;
+            text-align: center;
+            color: var(--white);
+            box-shadow: 0 0px 10px rgba(88, 86, 214, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 120px;
+            cursor: pointer;
+        }
+        
+        .menu-card.yellow {
+            background: rgb(255, 243, 232);
+            color: var(--text-main);
+            border: 3px solid #ffb45d;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .menu-card.blue {
+            background: rgb(212, 238, 255);
+            color: var(--text-main);
+            border: 3px solid #5aa7ff;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .menu-icon { font-size: 30px; margin-bottom: 5px; }
+        .menu-title { font-size: 20px; font-weight: bold; margin-bottom: 5px; line-height: 1.2; }
+        .menu-sub { font-size: 14px; opacity: 0.9; }
+        .menu-card.yellow .menu-card.blue .menu-sub { color: var(--text-sub); }
+
+        /* Glossary Menu Specific */
+        .glossary-list {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .glossary-item-btn {
+            background: var(--white);
+            color: var(--text-main);
+            padding: 20px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            text-align: left;
+        }
+        .glossary-item-btn span.icon { font-size: 24px; margin-right: 10px; }
+        .glossary-item-btn:active { background: #E5E5EA; }
+
+        /* --- Practice Screen (Dark Mode) --- */
+        #practice-screen {
+            background-color: var(--dark-bg);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 40px 20px;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Progress Indicator */
+        .progress-indicator {
+            position: absolute;
+            top: 20px;
+            right: 0;
+            left: 0;
+            text-align: center;
+            color: rgb(105, 149, 231);
+            font-size: 18px;
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        /* Audio Wave Animation */
+        .audio-wave-container {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 40px; 
+            margin-bottom: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .audio-wave-container.playing { opacity: 1; }
+        .wave-bar {
+            width: 6px;
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 3px;
+            animation: wave 1s infinite ease-in-out;
+        }
+        .wave-bar:nth-child(1) { animation-delay: 0.0s; height: 40%; }
+        .wave-bar:nth-child(2) { animation-delay: 0.1s; height: 70%; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; height: 100%; }
+        .wave-bar:nth-child(4) { animation-delay: 0.3s; height: 70%; }
+        .wave-bar:nth-child(5) { animation-delay: 0.4s; height: 40%; }
+        @keyframes wave {
+            0%, 100% { transform: scaleY(0.5); opacity: 0.5; }
+            50% { transform: scaleY(1); opacity: 1; box-shadow: 0 0 10px var(--primary-color); }
+        }
+
+        .officer-avatar {
+            width: 80px;
+            height: 80px;
+            background: #d8d8ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 45px;
+            border: 3px solid var(--primary-color);
+            /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);*/
+            margin-bottom: 10px;
+            z-index: 2;
+        }
+
+        .question-box {
+            background: var(--white);
+            color: var(--text-main);
+            width: 100%;
+            max-width: 500px;
+
+            flex: 1;           /* 霈枏�雿娍遛�拚�蝛粹� */
+            min-height: 100px; /* 閮剖�銝��𧢲�撠譍�摨閖�摨佗��䔶��臬𤐄摰𡁻�摨� */
+    
+        /* 2. �詨�嚗𡁜�摰寥�憭𡁏���迂��凒皛曉� */
+            overflow-y: auto; 
+    
+            border-radius: 20px;
+            padding: 30px;
+    
+        /* 3. 靽格㺿雿��嚗𡁻𩑈憿𣬚𤌍撱箄降�惩椰撠漤�嚗屸鰐霈�瘥磰��芰� */
+            display: block; 
+            text-align: left; 
+            
+            position: relative;
+            cursor: pointer;
+            border: 1px solid #79abe1;
+            box-shadow: 0 10px 30px rgba(163, 187, 255, 0.3);
+            transition: all 0.3s ease;
+    
+         /* 4. �芸�皛穃�瘚�噐摨� */
+             -webkit-overflow-scrolling: touch;
+        }
+
+        /* N400 Question Style */
+        .question-content {
+            font-size: 22px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        /* Glossary Content Style */
+        .gloss-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .gloss-word {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            line-height: 1.1;
+        }
+        .gloss-phonetic {
+            font-size: 16px;
+            color: #8E8E93;
+            font-family: monospace;
+            margin-bottom: 5px;
+        }
+        .gloss-cn {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        .gloss-divider {
+            width: 100%;
+            height: 1px;
+            background: #E5E5EA;
+            margin-bottom: 20px;
+        }
+        .gloss-def-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+        .gloss-def {
+            font-size: 24px;
+            font-weight: 700;
+            color: #000;
+            line-height: 1.3;
+        }
+        .audio-sm-btn {
+            background: #F2F2F7;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 16px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .audio-sm-btn:active {
+            transform: scale(0.9);
+            background: #E5E5EA;
+        }
+
+        .click-hint {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #8E8E93;
+        }
+        .click-hint span { margin-top: 10px; font-size: 18px; font-weight: bold; }
+
+        .controls-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 5px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .round-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+       /* 1. �箇�璅��嚗𡁻�閮剔��页��質𠧧�峕艶嚗𣬚鍂�潛毀蝧雴葉嚗� */
+.main-action-btn {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: none;
+    background: #FFFFFF !important; /* 蝣箔�蝺渡���糓�質𠧧 */
+    color: #000000 !important;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 8px 15px rgba(110, 142, 251, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: transform 0.1s ease, background 0.3s ease;
+    outline: none;
     -webkit-tap-highlight-color: transparent;
 }
 
-body {
-    margin: 0;
-    padding: 0;
-    background-color: var(--bg-color);
-    /* 使用 min-height 而非固定 height，並考慮 iOS 的安全區域 */
-    min-height: 100vh;
-    min-height: -webkit-fill-available; 
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-    overflow-y: auto; /* 允許整體滾動 */
+/* �嘥����页��厰��峕艶靘萘��舐蒾�莎�雿��摮堒��𦠜�霈羓��滩𠧧 */
+button#main-btn.main-action-btn.colorful {
+    color: #5856D6 !important;
+    border: 3px solid #5856D6 !important;
+    background-color: #FFFFFF !important;
+    /* 蝣箔�蝮格𦆮�閧𧞄 */
+    transition: transform 0.1s ease-in-out;
 }
 
-html {
-    height: -webkit-fill-available;
+/* 暺墧����蝮格𦆮��� */
+.main-action-btn:active {
+    transform: scale(0.9) !important;
 }
 
-/* --- Common Utils --- */
-.hidden { display: none !important; }
-.invisible { opacity: 0 !important; }
-.btn { border: none; cursor: pointer; outline: none; transition: transform 0.1s; }
-.btn:active { transform: scale(0.95); }
+        .bottom-actions {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 500px;
+            margin-top: 20px;
+        }
 
-/* --- Home Screen & Other Screens --- */
-#home-screen, #glossary-menu-screen, #practice-screen, #bookmark-screen, #quiz-screen {
-    flex: 1;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px;
-    padding-bottom: env(safe-area-inset-bottom); /* 適應 iPhone 底部橫條 */
-}
+        .rect-btn {
+            background: #cbe8ff;
+            color: var(--white);
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-#home-screen {
-    justify-content: flex-start;
-    padding-top: 40px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-}
+        .bookmarked { color: #FFD700; } 
 
-.header {
-    text-align: center;
-    margin-bottom: 30px;
-}
-.header h1 {
-    color: #1a1a1a;
-    font-size: 28px;
-    margin: 0;
-    font-weight: 700;
-}
-.header h2 {
-    color: var(--primary-color);
-    font-size: 32px;
-    margin: 5px 0 0 0;
-    font-weight: 800;
-}
+        /* --- Bookmark Screen --- */
+        #bookmark-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-color);
+            height: 100vh; /* Fixed height for flex container */
+            overflow: hidden; /* Prevent body scroll */
+        }
 
-.grid-menu {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    width: 100%;
-    max-width: 500px;
-}
+        .nav-bar {
+            background: var(--white);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+        .nav-back { font-size: 24px; margin-right: 15px; cursor: pointer; }
+        .nav-title { font-size: 20px; font-weight: bold; }
 
-.menu-card {
-    background: var(--primary-color);
-    border-radius: 24px;
-    padding: 20px 10px;
-    text-align: center;
-    color: var(--white);
-    box-shadow: 0 4px 10px rgba(88, 86, 214, 0.2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 110px;
-    cursor: pointer;
-}
+        /*
 
-.menu-card.yellow { background: rgb(255, 243, 232); color: var(--text-main); border: 2px solid #ffb45d; }
-.menu-card.blue { background: rgb(212, 238, 255); color: var(--text-main); border: 2px solid #5aa7ff; }
+        .tabs {
+            display: flex;
+            background: var(--white);
+            padding: 0 20px;
+            border-bottom: 1px solid #E5E5EA;
+            overflow-x: auto;
+            flex-shrink: 0;
+        }
+        .tab {
+            margin-right: 20px;
+            padding: 15px 5px;
+            cursor: pointer;
+            color: var(--text-sub);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+        }
 
-.menu-icon { font-size: 28px; margin-bottom: 5px; }
-.menu-title { font-size: 18px; font-weight: bold; margin-bottom: 2px; line-height: 1.2; }
-.menu-sub { font-size: 13px; opacity: 0.9; }
-
-/* Glossary Menu */
-#glossary-menu-screen {
-    padding: 10px 0;
-}
-.glossary-list {
-    width: 100%;
-    max-width: 400px;
-    padding: 0 20px;
-}
-
-/* --- Practice Screen (Dark Mode) --- */
-#practice-screen {
-    background-color: var(--dark-bg);
-    justify-content: flex-start;
-    color: var(--white);
-    min-height: 100vh;
-    overflow-y: auto;
-}
-
-.progress-indicator {
-    margin-top: 10px;
-    color: rgb(105, 149, 231);
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.audio-wave-container {
-    height: 30px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin: 20px 0;
-    opacity: 0;
-}
-.audio-wave-container.playing { opacity: 1; }
-.wave-bar {
-    width: 5px;
-    background: var(--primary-color);
-    border-radius: 3px;
-    animation: wave 1s infinite ease-in-out;
-}
-/* ... @keyframes wave stays same ... */
-@keyframes wave {
-    0%, 100% { transform: scaleY(0.5); opacity: 0.5; }
-    50% { transform: scaleY(1); opacity: 1; box-shadow: 0 0 10px var(--primary-color); }
-}
-
-.officer-avatar {
-    width: 70px;
-    height: 70px;
-    background: #d8d8ff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 40px;
-    border: 3px solid var(--primary-color);
-    margin-bottom: 15px;
-}
-
-.question-box {
-    background: var(--white);
-    color: var(--text-main);
-    width: 100%;
-    max-width: 500px;
-    min-height: 50px;
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 20px;
-    overflow-y: visible; /* 改為可見，讓外層滾動 */
-    box-shadow: 0 10px 30px rgba(163, 187, 255, 0.2);
-}
-
-.controls-area {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    width: 100%;
-    margin-bottom: 20px;
-}
-
-.main-action-btn {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: #FFFFFF !important;
-    color: #000 !important;
-    font-size: 16px;
-    font-weight: bold;
-    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
-}
-
-.bottom-actions {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    width: 100%;
-    margin-bottom: 30px;
-}
-
-/* --- Bookmark Screen --- */
-#bookmark-screen {
-    padding: 0;
-    background: var(--bg-color);
-}
-.nav-bar {
-    width: 100%;
-    background: var(--white);
-    padding: 15px 20px;
-    padding-top: env(safe-area-inset-top);
-    display: flex;
-    align-items: center;
-    box-shadow: 0 1px 10px rgba(0,0,0,0.05);
-}
-
+        */
+        
+        /* 璅嗵惜甈�抅蝷擧見撘� */
 .tabs {
-    width: 100%;
     display: flex;
+    justify-content: space-around;
+    border-bottom: 1px solid #E5E5EA; /* 摨閖����蝺� */
     background: #fff;
-    border-bottom: 1px solid #E5E5EA;
 }
+
 .tab {
-    flex: 1;
     padding: 12px 0;
+    font-size: 16px;
+    color: #8E8E93; /* �芷�銝剜������ */
+    cursor: pointer;
+    flex: 1;
     text-align: center;
-    color: #8E8E93;
+    transition: all 0.2s; /* 憓𧼮�撟單��擧腹��� */
     font-weight: 500;
     position: relative;
 }
-.tab.active { color: #007AFF; font-weight: bold; }
+
+/* �訾葉���𧢲見撘� (Active) */
+.tab.active {
+    color: #007AFF; /* �訾葉����滩𠧧 */
+    font-weight: bold;
+}
+
+/* �訾葉����寧��滩𠧧璈急� */
 .tab.active::after {
-    content: ""; position: absolute; bottom: 0; left: 20%; right: 20%;
-    height: 3px; background: #007AFF; border-radius: 3px 3px 0 0;
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    right: 20%;
+    height: 3px;
+    background: #007AFF;
+    border-radius: 3px 3px 0 0;
 }
 
-.list-container {
-    width: 100%;
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-}
 
-/* 其他小組件樣式保持 ... */
-.reading-card {
-    background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px;
-    display: flex; align-items: center; gap: 12px;
-}
-.reading-en { font-size: 18px; font-weight: 800; color: #000; margin-bottom: 4px; }
-.reading-cn { font-size: 14px; color: #8E8E93; }
+        .list-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            min-height: 0; /* Crucial for scrolling inside flex */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        }
 
-/* Contact & Footer */
-.contact-section {
-    margin-top: 20px;
-    padding: 30px 15px;
+        /* Custom Scrollbar Styling */
+        .list-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .list-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .list-container::-webkit-scrollbar-thumb {
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 3px;
+        }
+
+        .list-item {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .list-audio-btn {
+            background: #F2F2F7;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--primary-color);
+            font-size: 18px;
+        }
+
+        .list-text { flex: 1; font-size: 16px; line-height: 1.4; }
+        .list-remove { color: var(--danger); font-size: 20px; cursor: pointer; padding: 5px; }
+
+      .contact-section {
+    margin-top: 40px;
+    padding: 30px 15px 50px 15px; /* 憓𧼮�摨閖��栞�嚗屸俈甇Ｘ�璈罸��� */
     text-align: center;
+    border-top: 1px dashed #ddd; /* �寧��𤤿��湔�閮剛��� */
     width: 100%;
-}
-.xiaohongshu-btn {
-    background: linear-gradient(135deg, #ff2442 0%, #ff5263 100%);
-    color: white; padding: 12px 25px; border-radius: 30px;
-    text-decoration: none; font-weight: bold;
+    max-width: 500px;
 }
 
-/* Quiz Screen specific tweaks */
-#quiz-screen {
-    min-height: 100vh;
-    overflow-y: auto;
-    background: #fff;
+.contact-text {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
 }
+
+/* �滩痊�脫��∠�璅�� */
+.disclaimer-box {
+    background-color: #E5E5EA; /* 瘥磰��舐�瘛梁��啗𠧧 */
+    padding: 16px;
+    border-radius: 16px;
+    margin-bottom: 25px;
+    text-align: left;
+    font-size: 13px; /* 蝔滚凝�惩之銝�暺鮋�嚗峕䲮靘輸𩑈頛拚鰐霈� */
+    color: #3A3A3C;
+    line-height: 1.6;
+    border: 1px solid #D1D1D6;
+}
+.disclaimer-box strong {
+    color: #1C1C1E;
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+} 
+/* 撠讐��豢��訫�蝝𡄯��惩�瞍貉���苊敶� */
+.xiaohongshu-btn {
+    background: linear-gradient(135deg, #ff2442 0%, #ff5263 100%); 
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(255, 36, 66, 0.3);
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none; /* �脫迫 <a> 璅嗵惜暺䁅�銝见�蝺� */
+}
+
+.xiaohongshu-btn:hover {
+    box-shadow: 0 8px 20px rgba(255, 36, 66, 0.4);
+    transform: translateY(-2px);
+}
+
+.xiaohongshu-btn:active {
+    transform: scale(0.96);
+    box-shadow: 0 2px 8px rgba(255, 36, 66, 0.2);
+}
+
+/* ��𧋦�笔凝隤� */
+.version-text {
+    font-size: 12px;
+    color: #AEAEB2;
+    margin-top: 20px;
+    letter-spacing: 0.5px;
+}
+
+/* --- 靽格迤擐㚚�皛曉�擃娪� --- */
+#home-screen {
+    /* 蝣箔��典��Ｗ��𧢲�銝𠰴�摰嫣���◤���嚗䔶�皛曉�瘚�噐 */
+    -webkit-overflow-scrolling: touch; 
+    justify-content: flex-start; /* �寧����撠漤�嚗屸� margin �芸��鞾�嚗屸��滚�摰孵��� */
+    padding-top: 40px;
+}
+
+/* �梯�璅∪�璅��*/
+.reading-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.reading-card:active {
+    transform: scale(0.98);
+    background: #F9F9F9;
+}
+
+.reading-content {
+    flex: 1;
+}
+
+.reading-en {
+    font-size: 18px;
+    font-weight: 800; /* �删� */
+    color: #000;      /* 瘛梯𠧧 */
+    line-height: 1.4;
+    margin-bottom: 4px;
+}
+
+.reading-cn {
+    font-size: 14px;
+    color: #8E8E93;   /* 頛�滓�� */
+    font-weight: 500;
+}
+
+.reading-icon {
+    font-size: 20px;
+    color: #007AFF;
+    opacity: 0.8;
+}
+
+
+/* --- 皜祈岫璅∪� --- */
+
+/* 皜祈岫����峕艶���撅� */
+#quiz-screen {
+    background-color: #ffffff; 
+    flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px; color: #333;
+}
+
+/* ����㯄�摰孵膥 */
+.quiz-header { width: 100%; max-width: 500px; margin-bottom: 10px; }
+.header-top { display: flex; justify-content: space-between; font-weight: bold; margin-top: 10px; margin-bottom: 10px; }
+
+.dots-container {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+}
+
+.dot {
+    width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #BCBCBC;
+    background: white; cursor: pointer; transition: all 0.2s;
+}
+.dot.current {outline: 2px solid #000000;
+    border-color: #000000; } /* �嗅�憿𣬚𤌍暺煾� */
+.dot.correct { background-color: #67B367; border-color: #67B367; } /* 蝬㰘𠧧 */
+.dot.wrong { background-color: #E85A4F; border-color: #E85A4F; }   /* 蝝�𠧧 */
+
+/* 皜祈岫撠�鍂�瑟䲮敶Ｘ��� */
+.quiz-main-btn {
+    width: 100%; max-width: 500px; height: 55px; border-radius: 100px;
+    background: #4A90E2 !important; color: white !important;
+    font-size: 20px; font-weight: bold; margin-top:10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}  
+.quiz-main-btn.next-mode { background: #333333 !important; }
+
+/* 撠漤𥲤�厰�蝯� */
+.quiz-controls { flex-direction: column; width: 100%; }
+.judge-group { display: none; width: 100%; max-width: 500px; flex-direction: column; margin-top:20px; margin-bottom: -15px; }
+.judge-group.show { display: flex; }
+
+.btn-judge { flex: 1; height: 45px; border-radius: 100px; color: white; font-weight: bold; font-size: 20px; }
+.btn-correct { background-color: #46d573; }
+.btn-wrong { background-color: #ec5449; }
+
+    </style>
