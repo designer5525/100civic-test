@@ -1,6 +1,6 @@
 {
-  "name": "N-400 入籍聽力助手",
-  "short_name": "N400助手",
+  "name": "128civics Read&Write",
+  "short_name": "128civics",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
