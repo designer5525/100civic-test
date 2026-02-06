@@ -329,8 +329,11 @@
         }
 
         .round-btn {
-            width: 60px;
-            height: 60px;
+            flex: 0 1 50px; /* 基礎大小 50px，但空間不足時允許收縮 */
+            width: 50px;
+            height: 50px;
+            min-width: 40px; /* 設定最小極限，防止變成橢圓 */
+            min-height: 40px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.1);
             color: var(--white);
@@ -339,14 +342,16 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 2px 7px rgba(110, 143, 251, 0.263);
+            padding: 0;
         }
 
     
         
        /* 1. 基礎樣式：預設狀態（白色背景，用於練習中） */
 .main-action-btn {
-    width: 120px;
-    height: 120px;
+    flex: 0 1 100px; /* 中間按鈕保持固定大小，不收縮以維持可讀性 */
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     border: none;
     background: #FFFFFF !important; /* 確保練習時是白色 */
